@@ -13,6 +13,7 @@ def _pol_ring():
 
 def cbb2_1(q, q2, p):
     '''
+    A polynomial defined before Theorem 4.1 in the Katsurada's paper.
     q: degree n
     q2: degree n - 1
     '''
@@ -85,6 +86,7 @@ def _rat_func_1_odd(p, n,
 
 def cbb2_0(q, q2, p):
     '''
+    A polynomial defined before Theorem 4.1 in the Katsurada's paper.
     q: degree n
     q2: degree n - 1
     '''
@@ -269,4 +271,3 @@ def cbb2_dict(b1, q2):
     if n % 2 == 1:
         d = _invariants_2_odd(b1, q2)
         return _rat_funcs_odd(n, **d)
-
