@@ -215,10 +215,10 @@ def _rat_funcs_even(n, xi=None, xi_dash=None, xi_hat=None,
                     delta=None, delta_tilde=None, delta_hat=None):
     res = {}
     X = _pol_ring().gens()[0]
-    # 00
-    num = 1 - two**(n//2) * X
+    # 11
+    num = 1 - two**(n//2) * xi * X
     denom = 1 - two**(n+1) * X**2
-    res['00'] = num/denom
+    res['11'] = num/denom
     # 10
     num = ((-1)**(xi + 1) * xi_dash * eta_tilde *
            (1 - two**(n//2 + 1) * X * xi) *
@@ -244,10 +244,10 @@ def _rat_funcs_odd(n, sigma=None, delta=None, delta_tilde=None,
                    delta_hat=None, eta=None, eta_hat=None, xi_tilde=None):
     res = {}
     X = _pol_ring().gens()[0]
-    # 00
+    # 11
     num = ZZ(1)
     denom = 1 - 2**((n+1)//2) * xi_tilde * X
-    res['00'] = num/denom
+    res['11'] = num/denom
     # 10
     num = ((-1)**xi_tilde * eta *
            (2**((n-1)//2)*X)**(delta - delta_tilde + 2 - xi_tilde**2 + sigma)
