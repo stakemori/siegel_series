@@ -3,12 +3,13 @@
 Compute Siegel series by using recursive equations given by
 Katsurada, `An explicit formula for Siegel series,
 American jornal of Mathematics 121 (199),415 - 452.'
-
 '''
 
-from sage.all import (cached_function, QuadraticForm, ZZ,
-                      least_quadratic_nonresidue, legendre_symbol, is_odd)
+from sage.all import (cached_function, QuadraticForm, ZZ, QQ,
+                      least_quadratic_nonresidue, legendre_symbol, is_odd,
+                      matrix)
 from degree2.utils import list_group_by
+import operator
 
 @cached_function
 def does_2adically_rep_zero(a, b, c):
@@ -46,7 +47,7 @@ def _trans_jordan_dec_2(us):
         l.extend([(-u) % 8, hyp2_name])
     else:
         l.extend([(3*u)%8, y2_name])
-    l_diag = [a for a in l if not a in [hyp2_name, y2_name]]
+    l_diag = [a for a in l if a not in [hyp2_name, y2_name]]
     if len(l_diag) <= 2:
         return l
     else:
@@ -134,8 +135,29 @@ def siegel_series_polynomial(B, p):
         return _siegel_series_polynomial_odd(blcs, p)
 
 
+def _blocks_to_quad_form(blcs, p):
+    h = matrix([[QQ(0), QQ(1)/QQ(2)],
+                [QQ(1)/QQ(2), QQ(0)]])
+    y = matrix([[QQ(1), QQ(1)/QQ(2)],
+                [QQ(1)/QQ(2), QQ(1)]])
+    mat_dict = {"h": h, "y": y}
+    mats_w_idx = [(idx, mat_dict[qf] if qf in ("h", "y") else matrix([[qf]]))
+                  for idx, qf in blcs]
+    qfs = [QuadraticForm(ZZ, m * ZZ(2) * p**idx) for idx, m in mats_w_idx]
+    return reduce(operator.add, qfs)
+
+
 def _siegel_series_polynomial_2(blcs):
-    pass
+    max_idx = blcs[0][0]
+    first_qfs = [qf for idx, qf in blcs if idx == max_idx]
+    unit_diags = [qf for qf in first_qfs if qf not in ["h", "y"]]
+    if len(unit_diags) == 1:
+        # Use the recursive equation given in Theorem 4.1.
+        q = _blocks_to_quad_form(blcs, 2)
+        q2 = _blocks_to_quad_form(blcs[1:], 2)
+
+    else:
+        pass
 
 def _siegel_series_polynomial_odd(blcs, p):
     pass
