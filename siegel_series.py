@@ -119,13 +119,15 @@ def siegel_series_polynomial(B, p):
     '''
     q = QuadraticForm(ZZ, B * 2)
     if p == 2:
-        return _siegel_series_polynomial_2(q)
+        blcs = jordan_blocks_2(q)
+        return _siegel_series_polynomial_2(blcs)
     else:
-        return _siegel_series_polynomial_odd(q, p)
+        blcs = jordan_blocks_odd(q, p)
+        return _siegel_series_polynomial_odd(blcs, p)
 
 
-def _siegel_series_polynomial_2(q):
+def _siegel_series_polynomial_2(blcs):
     pass
 
-def _siegel_series_polynomial_odd(q, p):
+def _siegel_series_polynomial_odd(blcs, p):
     pass
