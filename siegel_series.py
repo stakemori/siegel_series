@@ -1,4 +1,11 @@
 # -*- coding: utf-8; mode: sage -*-
+'''
+Compute Siegel series by using recursive equations given by
+Katsurada, `An explicit formula for Siegel series,
+American jornal of Mathematics 121 (199),415 - 452.'
+
+'''
+
 from sage.all import (cached_function, QuadraticForm, ZZ,
                       least_quadratic_nonresidue, legendre_symbol, is_odd)
 from degree2.utils import list_group_by
@@ -52,7 +59,7 @@ def jordan_blocks_odd(q, p):
     p: odd prime,
     q: quadratic form.
     Let q ~ sum p**a_i * b_i * x_i^2 be a jordan decomposition.
-    Returns the list of (a_i, b_i)
+    Returns the list of (a_i, b_i) sorted so that a_0 >= a_1 >= ...
     '''
     p = ZZ(p)
     res = []
@@ -82,6 +89,7 @@ def jordan_blocks_2(q):
     matrix([[1, 1/2], [1/2, 1]]).
     If `b' is in [1, 3, 5, 7], then the corresponding
     gram matrix is equal to matrix([[b]]).
+    These tuples are sorted so that a_0 >= a_1 >= ...
     '''
     ls = []
     for a, q1 in q.jordan_blocks_by_scale_and_unimodular(2):
