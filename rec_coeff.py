@@ -104,19 +104,27 @@ def cbb2_0(q, q2, p):
 # u1, u2 :units
 # q1 <-> 2^m * diag(u1, u2), h or y.
 
+mat_dict = {"h": matrix([[QQ(0), QQ(1)/QQ(2)],
+                         [QQ(1)/QQ(2), QQ(0)]]),
+            "y": matrix([[QQ(1), QQ(1)/QQ(2)],
+                         [QQ(1)/QQ(2), QQ(1)]])}
+
 class JordanBlock2(object):
-    def __init__(self, prim_q1, m):
-        self._prim_q1 = prim_q1
+    def __init__(self, units_or_hy, m):
+        '''
+        units_or_hy is a list of two units or "h" or "y".
+        m is an integer.
+        '''
         self._m = m
-        # type is "u", "h" or "y"
-        mat = self._prim_q1.Gram_matrix() * two**m
-        self._mat = mat
-        if mat[(0, 1)] == 0:
-            self._type = "u"
-        elif mat[(0, 0)] == 0:
-            self._type = "h"
+        if units_or_hy in ("h", "y"):
+            self._type = units_or_hy
+            self._mat = mat_dict[units_or_hy] * two**m
         else:
-            self._type = "y"
+            self._type = "u"
+            self._mat = matrix([[units_or_hy[0], 0],
+                                [0, units_or_hy[1]]]) * two**m
+
+        self._prim_q1 = QuadraticForm(ZZ, two * self._mat)
 
     @property
     def mat(self):
