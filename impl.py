@@ -141,23 +141,32 @@ def _blocks_to_quad_form(blcs, p):
     y = matrix([[QQ(1), QQ(1)/QQ(2)],
                 [QQ(1)/QQ(2), QQ(1)]])
     mat_dict = {"h": h, "y": y}
-    mats_w_idx = [(idx, mat_dict[qf] if qf in ("h", "y") else matrix([[qf]]))
-                  for idx, qf in blcs]
-    qfs = [QuadraticForm(ZZ, m * ZZ(2) * p**idx) for idx, m in mats_w_idx]
+    mats_w_expt = [(expt, mat_dict[qf] if qf in ("h", "y") else matrix([[qf]]))
+                  for expt, qf in blcs]
+    qfs = [QuadraticForm(ZZ, m * ZZ(2) * p**expt) for expt, m in mats_w_expt]
     return reduce(operator.add, qfs)
 
 
+def swap_ls(l, i, j):
+    if i != j:
+        l[i], l[j] = l[j], l[i]
+
 def _siegel_series_polynomial_2(blcs):
-    max_idx = blcs[0][0]
-    first_qfs = [qf for idx, qf in blcs if idx == max_idx]
+    max_expt = blcs[0][0]
+    first_qfs = [qf for expt, qf in blcs if expt == max_expt]
     unit_diags = [qf for qf in first_qfs if qf not in ["h", "y"]]
     if len(unit_diags) == 1:
         # Use the recursive equation given in Theorem 4.1.
         q = _blocks_to_quad_form(blcs, 2)
-        q2 = _blocks_to_quad_form(blcs[1:], 2)
+        blcs_q2 = blcs[1:]
+        q2 = _blocks_to_quad_form(blcs_q2, 2)
+        return (cbb2_1(q, q2, 2) *
+                _siegel_series_polynomial_2(blcs_q2).subs({X: ZZ(2)*X}) +
+                cbb2_0(q, q2, 2) * _siegel_series_polynomial_2(blcs_q2))
+    # Else use the recursive equation given in Theorem 4.2.
+    elif :
 
-    else:
-        pass
+
 
 def _siegel_series_polynomial_odd(blcs, p):
     pass
