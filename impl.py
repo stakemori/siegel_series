@@ -11,6 +11,11 @@ from sage.all import (cached_function, QuadraticForm, ZZ, QQ,
 from degree2.utils import list_group_by
 import operator
 
+from siegel_series.rec_coeff import (cbb2_0, cbb2_1, _pol_ring, JordanBlock2,
+                                     cbb2_dict)
+
+X = _pol_ring().gens()[0]
+
 @cached_function
 def does_2adically_rep_zero(a, b, c):
     '''
@@ -148,23 +153,61 @@ def _blocks_to_quad_form(blcs, p):
 
 
 def swap_ls(l, i, j):
-    if i != j:
-        l[i], l[j] = l[j], l[i]
+    l[i], l[j] = l[j], l[i]
 
 def _siegel_series_polynomial_2(blcs):
+    non_diags = ("h", "y")
     max_expt = blcs[0][0]
-    first_qfs = [qf for expt, qf in blcs if expt == max_expt]
-    unit_diags = [qf for qf in first_qfs if qf not in ["h", "y"]]
-    if len(unit_diags) == 1:
+    first_qfs_w_idx = [(idx, qf) for idx, (expt, qf) in enumerate(blcs)
+                       if expt == max_expt]
+    unit_diags_w_idx = [(idx, qf) for idx, qf in first_qfs_w_idx
+                        if qf not in non_diags]
+    if len(unit_diags_w_idx) == 1:
         # Use the recursive equation given in Theorem 4.1.
+
+        # Sort blcs so that the assumption of Theorem 4.1 holds.
+        if unit_diags_w_idx[0][0] != 0:
+            swap_ls(blcs, unit_diags_w_idx[0][0], 0)
+
         q = _blocks_to_quad_form(blcs, 2)
         blcs_q2 = blcs[1:]
         q2 = _blocks_to_quad_form(blcs_q2, 2)
-        return (cbb2_1(q, q2, 2) *
-                _siegel_series_polynomial_2(blcs_q2).subs({X: ZZ(2)*X}) +
-                cbb2_0(q, q2, 2) * _siegel_series_polynomial_2(blcs_q2))
+        pol = _siegel_series_polynomial_2(blcs_q2)
+        return (cbb2_1(q, q2, 2) * pol.subs({X: ZZ(2)*X}) +
+                cbb2_0(q, q2, 2) * pol)
+
     # Else use the recursive equation given in Theorem 4.2.
-    elif :
+
+    # Sort blcs so that the assumption of Theorem 4.2 holds.
+    for idx, qf in first_qfs_w_idx:
+        if qf in non_diags and idx != 0:
+            swap_ls(blcs, 0, idx)
+            break
+
+    if blcs[0] in non_diags:
+        m, units_or_hy = blcs[0]
+        blcs_q2 = blcs[1:]
+    else:
+        (m, u1), (_, u2) = blcs[0], blcs[1]
+        units_or_hy = [u1, u2]
+        blcs_q2 = blcs[2:]
+
+    q2 = _blocks_to_quad_form(blcs_q2, 2)
+    b1 = JordanBlock2(units_or_hy, m)
+    coeff_dict = cbb2_dict(b1, q2)
+    c11 = coeff_dict['11']
+    c10 = coeff_dict['10']
+    c21 = coeff_dict['21']
+    c20 = coeff_dict['20']
+    coeffs = [c11 * c21,
+              c11*c20 + c10*c21,
+              c10 * c20]
+    pol = _siegel_series_polynomial_2(q2)
+    pols = [pol.subs({X: ZZ(4) * X}),
+            pol.subs({X: ZZ(2) * X}),
+            pol]
+    return sum((a*b for a, b in zip(coeffs, pols)))
+
 
 
 
