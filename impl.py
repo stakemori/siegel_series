@@ -7,7 +7,7 @@ American jornal of Mathematics 121 (199),415 - 452.'
 
 from sage.all import (cached_function, QuadraticForm, ZZ, QQ,
                       least_quadratic_nonresidue, legendre_symbol, is_odd,
-                      matrix)
+                      matrix, fundamental_discriminant, valuation)
 from degree2.utils import list_group_by
 import operator
 
@@ -175,14 +175,16 @@ def _siegel_series_polynomial_2(blcs):
                        if expt == max_expt]
     unit_diags_w_idx = [(idx, qf) for idx, qf in first_qfs_w_idx
                         if qf not in non_diags]
+    q = _blocks_to_quad_form(blcs, 2)
+    # Use known formulas if dim(q) in (1, 2).
+    if q.dim() == 1:
+        return _siegel_series_dim1(q, ZZ(2))
+    elif q.dim() == 2:
+        return _siegel_series_dim2(q, ZZ(2))
+
     if len(unit_diags_w_idx) == 1:
         # Use the recursive equation given in Theorem 4.1.
 
-        # Sort blcs so that the assumption of Theorem 4.1 holds.
-        if unit_diags_w_idx[0][0] != 0:
-            swap_ls(blcs, unit_diags_w_idx[0][0], 0)
-
-        q = _blocks_to_quad_form(blcs, 2)
         blcs_q2 = blcs[1:]
         q2 = _blocks_to_quad_form(blcs_q2, 2)
         pol = _siegel_series_polynomial_2(blcs_q2)
@@ -190,12 +192,6 @@ def _siegel_series_polynomial_2(blcs):
                 cbb2_0(q, q2, 2) * pol)
 
     # Else use the recursive equation given in Theorem 4.2.
-
-    # Sort blcs so that the assumption of Theorem 4.2 holds.
-    for idx, qf in first_qfs_w_idx:
-        if qf in non_diags and idx != 0:
-            swap_ls(blcs, 0, idx)
-            break
 
     if blcs[0] in non_diags:
         m, units_or_hy = blcs[0]
@@ -222,7 +218,28 @@ def _siegel_series_polynomial_2(blcs):
     return sum((a*b for a, b in zip(coeffs, pols)))
 
 
-
-
 def _siegel_series_polynomial_odd(blcs, p):
     pass
+
+
+def _siegel_series_dim1(q, p):
+    return sum(((p*X)**a for a in range(q.content().valuation(p) + 1)))
+
+
+def _siegel_series_dim2(q, p):
+    det_4 = q.Gram_det() * ZZ(4)
+    c = q.content().valuation(p)
+    fd = fundamental_discriminant(-det_4)
+    f = (valuation(det_4, p) - valuation(fd, p)) / ZZ(2)
+    return (__siegel_series_dim2(p, c, f + 1) -
+            legendre_symbol(-det_4, p) * p * X * __siegel_series_dim2(p, c, f))
+
+
+def __siegel_series_dim2(p, a, b):
+    if b == 0:
+        return 0
+    a = min(a, b - 1)
+    r1 = (1- (p**2 * X)**(a + 1)) / (1 - p**2 * X)
+    rn2 = (p**3 * X**2)**b * p*X - p**b * (p * X)**(2*b - a)
+    rd2 = p * X - 1
+    return (r1 - rn2/rd2) / (1 - p**3 * X**2)
