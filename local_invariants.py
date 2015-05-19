@@ -47,8 +47,7 @@ def eta_p(q, p):
     p: a prime number
     '''
     hasse_inv = q.hasse_invariant__OMeara(p)
-    mat = q.Gram_matrix()
-    detb = mat.det()
+    detb = q.Gram_det()
     n = q.dim()
     h1 = hilbert_symbol(detb, detb * (-1)**((n-1)//2), p)
     h2 = hilbert_symbol(-1, -1, p)
@@ -60,9 +59,8 @@ def xi_p(q, p):
     q: an instance of QuadraticForm
     p: a prime number
     '''
-    B = q.Gram_matrix()
     n = q.dim()
-    return chi_p((-1)**(n//2) * B.det(), p)
+    return chi_p((-1)**(n//2) * q.Gram_det(), p)
 
 
 def xi_prime_p(q, p):
@@ -75,9 +73,8 @@ def xi_to_xi_dash(xi):
 
 def small_d(q, p):
     two = ZZ(2)
-    B = q.Gram_matrix()
     n = q.dim()
-    detb = B.det()
+    detb = q.Gram_det()
     larged = two**(2*(n//2)) * detb
     return valuation(larged, p)
 
