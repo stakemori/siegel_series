@@ -123,7 +123,20 @@ def jordan_blocks_2(q):
                 res.append((a + 1, b))
             else:
                 res.append((a, b))
-    return sorted(res, key=lambda x: -x[0])
+    # Sort the result so that assumptions of Theorem 4.1 and 4.2 hold.
+    non_diags = ("h", "y")
+    res1 = []
+    for m, blcs in sorted(list_group_by(res, lambda x: x[0]),
+                          key=lambda x: -x[0]):
+        unit_diags = [(a, qf) for a, qf in blcs if qf not in non_diags]
+        non_unit_diags = [(a, qf) for a, qf in blcs if qf in non_diags]
+        if len(unit_diags) == 1:
+            blcs = unit_diags + non_unit_diags
+        else:
+            blcs = non_unit_diags + unit_diags
+        res1.extend(blcs)
+    return res1
+
 
 
 def siegel_series_polynomial(B, p):
