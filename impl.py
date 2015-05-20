@@ -220,7 +220,19 @@ def _siegel_series_polynomial_2(blcs):
 
 
 def _siegel_series_polynomial_odd(blcs, p):
-    pass
+    q = _blocks_to_quad_form(blcs, p)
+    # Use known formulas when dim(q) = 1 or = 2.
+    if q.dim() == 1:
+        return _siegel_series_dim1(q, p)
+    elif q.dim() == 2:
+        return _siegel_series_dim2(q, p)
+    # Else use the recursive equation given in Theorem 4.1
+    blcs_q2 = blcs[1:]
+    pol = _siegel_series_polynomial_odd(blcs_q2, p)
+    q2 = _blocks_to_quad_form(blcs_q2, p)
+    return (cbb2_1(q, q2, p) * pol.subs({X: ZZ(2)*X}) +
+            cbb2_0(q, q2, p) * pol)
+
 
 
 def _siegel_series_dim1(q, p):
