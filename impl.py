@@ -144,6 +144,7 @@ def siegel_series_polynomial(B, p):
     B is a half integral matrix and p is a rational prime.
     It returns the polynomial part of the local Siegel series.
     '''
+    p = ZZ(p)
     q = QuadraticForm(ZZ, B * 2)
     if p == 2:
         blcs = jordan_blocks_2(q)
