@@ -60,7 +60,7 @@ def xi_p(q, p):
     p: a prime number
     '''
     n = q.dim()
-    return chi_p((-1)**(n//2) * q.Gram_det(), p)
+    return ZZ(chi_p((-1)**(n//2) * q.Gram_det(), p))
 
 
 def xi_prime_p(q, p):

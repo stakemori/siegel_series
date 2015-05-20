@@ -7,7 +7,8 @@ American jornal of Mathematics 121 (199),415 - 452.'
 
 from sage.all import (cached_function, QuadraticForm, ZZ, QQ,
                       least_quadratic_nonresidue, legendre_symbol, is_odd,
-                      matrix, fundamental_discriminant, valuation)
+                      matrix, fundamental_discriminant, valuation,
+                      kronecker_symbol)
 from degree2.utils import list_group_by
 import operator
 
@@ -194,7 +195,7 @@ def _siegel_series_polynomial_2(blcs):
 
     # Else use the recursive equation given in Theorem 4.2.
 
-    if blcs[0] in non_diags:
+    if blcs[0][1] in non_diags:
         m, units_or_hy = blcs[0]
         blcs_q2 = blcs[1:]
     else:
@@ -212,7 +213,7 @@ def _siegel_series_polynomial_2(blcs):
     coeffs = [c11 * c21,
               c11*c20 + c10*c21,
               c10 * c20]
-    pol = _siegel_series_polynomial_2(q2)
+    pol = _siegel_series_polynomial_2(blcs_q2)
     pols = [pol.subs({X: ZZ(4) * X}),
             pol.subs({X: ZZ(2) * X}),
             pol]
@@ -245,14 +246,14 @@ def _siegel_series_dim2(q, p):
     fd = fundamental_discriminant(-det_4)
     f = (valuation(det_4, p) - valuation(fd, p)) / ZZ(2)
     return (__siegel_series_dim2(p, c, f + 1) -
-            legendre_symbol(-det_4, p) * p * X * __siegel_series_dim2(p, c, f))
+            kronecker_symbol(-det_4, p) * p * X * __siegel_series_dim2(p, c, f))
 
 
 def __siegel_series_dim2(p, a, b):
     if b == 0:
         return 0
     a = min(a, b - 1)
-    r1 = (1- (p**2 * X)**(a + 1)) / (1 - p**2 * X)
+    r1 = (1 - (p**2 * X)**(a + 1)) / (1 - p**2 * X)
     rn2 = (p**3 * X**2)**b * p*X - p**b * (p * X)**(2*b - a)
     rd2 = p * X - 1
     return (r1 - rn2/rd2) / (1 - p**3 * X**2)

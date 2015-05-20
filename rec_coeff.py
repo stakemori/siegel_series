@@ -149,7 +149,7 @@ def _invariants_2_common(b1, q2):
     '''
     n = q2.dim() + 2
     m = b1.m
-    q = b1._prim_q1 * two**m + q2
+    q = _from_b1_q2_to_q(b1, q2)
     q3 = QuadraticForm(matrix([[2*(two**m)]])) + q2
     delta = delta_p(q, 2)
     delta_tilde = delta_p(q3, 2)
@@ -163,16 +163,20 @@ def _invariants_2_common(b1, q2):
         sigma = ZZ(2)
     else:
         sigma = ZZ(0)
-    return  {'simga': sigma,
+    return  {'sigma': sigma,
              'delta': delta,
              'delta_tilde': delta_tilde,
              'delta_hat': delta_hat}
 
 
+def _from_b1_q2_to_q(b1, q2):
+    m = b1.m
+    return b1._prim_q1.scale_by_factor(two**m) + q2
+
 def _invariants_2_even(b1, q2):
     n = q2.dim() + 2
     m = b1.m
-    q = b1._prim_q1 * two**m + q2
+    q = _from_b1_q2_to_q(b1, q2)
     xi = xi_p(q, 2)
     xi_dash = xi_to_xi_dash(xi)
     xi_hat = xi_p(q2, 2)
@@ -189,16 +193,17 @@ def _invariants_2_even(b1, q2):
     else:
         eta_tilde = ZZ(1)
 
-    return {"xi": xi,
-            "xi_dash": xi_dash,
-            "xi_hat": xi_hat,
-            "xi_hat_dash": xi_hat_dash,
-            "eta_tilde": eta_tilde}
-
+    res = {"xi": xi,
+           "xi_dash": xi_dash,
+           "xi_hat": xi_hat,
+           "xi_hat_dash": xi_hat_dash,
+           "eta_tilde": eta_tilde}
+    res.update(_invariants_2_common(b1, q2))
+    return res
 
 def _invariants_2_odd(b1, q2):
     m = b1.m
-    q = b1._prim_q1 * two**m + q2
+    q = _from_b1_q2_to_q(b1, q2)
     eta = eta_p(q, 2)
     eta_hat = eta_p(q2, 2)
     q3 = QuadraticForm(matrix([[2*(two**m)]])) + q2
@@ -206,9 +211,12 @@ def _invariants_2_odd(b1, q2):
         xi_tilde = 1
     else:
         xi_tilde = 0
-    return {'eta': eta,
-            'eta_hat': eta_hat,
-            'xi_tilde': xi_tilde}
+    res = {'eta': eta,
+           'eta_hat': eta_hat,
+           'xi_tilde': xi_tilde}
+    res.update(_invariants_2_common(b1, q2))
+    return res
+
 
 def _rat_funcs_even(n, xi=None, xi_dash=None, xi_hat=None,
                     xi_hat_dash=None, eta_tilde=None, sigma=None,
