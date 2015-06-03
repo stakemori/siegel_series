@@ -246,7 +246,7 @@ def _siegel_series_dim2(q, p):
     fd = fundamental_discriminant(-det_4)
     f = (valuation(det_4, p) - valuation(fd, p)) / ZZ(2)
     return (__siegel_series_dim2(p, c, f + 1) -
-            kronecker_symbol(-det_4, p) * p * X * __siegel_series_dim2(p, c, f))
+            kronecker_symbol(fd, p) * p * X * __siegel_series_dim2(p, c, f))
 
 
 def __siegel_series_dim2(p, a, b):
