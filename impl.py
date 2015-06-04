@@ -96,7 +96,8 @@ def jordan_blocks_2(q):
     matrix([[1, 1/2], [1/2, 1]]).
     If `b' is in [1, 3, 5, 7], then the corresponding
     gram matrix is equal to matrix([[b]]).
-    These tuples are sorted so that a_0 >= a_1 >= ...
+    These tuples are sorted so that assumptions of Theorem 4.1 or Theorem 4.2
+    hold.
     '''
     ls = []
     for a, q1 in q.jordan_blocks_by_scale_and_unimodular(2):
