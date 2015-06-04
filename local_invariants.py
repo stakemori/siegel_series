@@ -12,8 +12,7 @@ def _chi_p_odd(a, p):
     r = valuation(a, p)
     if r % 2 == 0:
         c = a//(p**r)
-        sgn = kronecker_symbol(c, p)
-        return sgn
+        return kronecker_symbol(c, p)
     else:
         return 0
 
@@ -78,8 +77,7 @@ def small_d(q, p):
     '''
     two = ZZ(2)
     n = q.dim()
-    detb = q.Gram_det()
-    larged = two**(2*(n//2)) * detb
+    larged = two**(2*(n//2)) * q.Gram_det()
     return valuation(larged, p)
 
 
