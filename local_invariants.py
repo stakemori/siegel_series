@@ -71,14 +71,22 @@ def xi_prime_p(q, p):
 def xi_to_xi_dash(xi):
     return 1 + xi - xi**2
 
+
 def small_d(q, p):
+    '''
+    d(B) given in Thoerem 3.2.
+    '''
     two = ZZ(2)
     n = q.dim()
     detb = q.Gram_det()
     larged = two**(2*(n//2)) * detb
     return valuation(larged, p)
 
+
 def delta_p(q, p):
+    r'''
+    \delta(B) given in Theorem 3.2.
+    '''
     n = q.dim()
     db = small_d(q, p)
     if n % 2 == 0:
