@@ -94,3 +94,25 @@ def delta_p(q, p):
         return 2 * ((db + 1 - dl)//2)
     else:
         return db
+
+
+def e_p(q, p):
+    '''
+    e(B) given in Theorem 3.2.
+    '''
+    n = q.dim()
+    dlt = delta_p(q, p)
+    if n % 2:
+        return dlt
+    else:
+        return dlt - ZZ(2) + ZZ(2) * xi_p(q, p)**2
+
+
+def zeta_p(q, p):
+    r'''
+    \zeta(B) given in Theorem 3.2.
+    '''
+    if q.dim() % 2:
+        return eta_p(q, p)
+    else:
+        return ZZ(1)
