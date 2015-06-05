@@ -174,10 +174,8 @@ def swap_ls(l, i, j):
 def _siegel_series_polynomial_2(blcs):
     non_diags = ("h", "y")
     max_expt = blcs[0][0]
-    first_qfs_w_idx = [(idx, qf) for idx, (expt, qf) in enumerate(blcs)
-                       if expt == max_expt]
-    unit_diags_w_idx = [(idx, qf) for idx, qf in first_qfs_w_idx
-                        if qf not in non_diags]
+    unit_diags_first_blc = [qf for expt, qf in blcs
+                            if expt == max_expt and qf not in non_diags]
     q = _blocks_to_quad_form(blcs, 2)
     # Use known formulas if dim(q) in (1, 2).
     if q.dim() == 1:
@@ -185,7 +183,7 @@ def _siegel_series_polynomial_2(blcs):
     elif q.dim() == 2:
         return _siegel_series_dim2(q, ZZ(2))
 
-    if len(unit_diags_w_idx) == 1:
+    if len(unit_diags_first_blc) == 1:
         # Use the recursive equation given in Theorem 4.1.
 
         blcs_q2 = blcs[1:]
@@ -211,13 +209,13 @@ def _siegel_series_polynomial_2(blcs):
     c10 = coeff_dict['10']
     c21 = coeff_dict['21']
     c20 = coeff_dict['20']
-    coeffs = [c11 * c21,
-              c11*c20 + c10*c21,
+    times2 = {X: ZZ(2) * X}
+    times4 = {X: ZZ(4) * X}
+    coeffs = [c11 * c21.subs(times2),
+              c11*c20.subs(times2) + c10*c21,
               c10 * c20]
     pol = _siegel_series_polynomial_2(blcs_q2)
-    pols = [pol.subs({X: ZZ(4) * X}),
-            pol.subs({X: ZZ(2) * X}),
-            pol]
+    pols = [pol.subs(times4), pol.subs(times2), pol]
     return sum((a*b for a, b in zip(coeffs, pols)))
 
 
@@ -232,7 +230,7 @@ def _siegel_series_polynomial_odd(blcs, p):
     blcs_q2 = blcs[1:]
     pol = _siegel_series_polynomial_odd(blcs_q2, p)
     q2 = _blocks_to_quad_form(blcs_q2, p)
-    return (cbb2_1(q, q2, p) * pol.subs({X: ZZ(2)*X}) +
+    return (cbb2_1(q, q2, p) * pol.subs({X: p * X}) +
             cbb2_0(q, q2, p) * pol)
 
 

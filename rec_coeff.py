@@ -118,17 +118,17 @@ class JordanBlock2(object):
         self._m = m
         if units_or_hy in ("h", "y"):
             self._type = units_or_hy
-            self._mat = mat_dict[units_or_hy] * two**m
+            self._mat_prim = mat_dict[units_or_hy]
         else:
             self._type = "u"
-            self._mat = matrix([[units_or_hy[0], 0],
-                                [0, units_or_hy[1]]]) * two**m
+            self._mat_prim = matrix([[units_or_hy[0], 0],
+                                     [0, units_or_hy[1]]])
 
-        self._prim_q1 = QuadraticForm(ZZ, two * self._mat)
+        self._prim_q1 = QuadraticForm(ZZ, self._mat_prim * two)
 
     @property
-    def mat(self):
-        return self._mat
+    def gram_mat(self):
+        return self._mat_prim * two ** self.m
 
     @property
     def type(self):
@@ -153,12 +153,12 @@ def _invariants_2_common(b1, q2):
     q3 = QuadraticForm(matrix([[2*(two**m)]])) + q2
     delta = delta_p(q, 2)
     delta_tilde = delta_p(q3, 2)
-    delta_hat = delta_p(q, 2)
+    delta_hat = delta_p(q2, 2)
     # Definition of sigma
     if ((n % 2 == 0 and b1.type == 'u' and small_d(q, 2) % 2 == 1)
         or
         (n % 2 == 0 and b1.type != 'u' and xi_p(q2, 2) == 0)):
-        sigma = (2 * delta_tilde - delta - delta_hat + 2)/2
+        sigma = (2 * delta_tilde - delta - delta_hat + 2)/two
     elif n % 2 == 1 and b1.type != 'u' and small_d(q3, 2) % 2 == 0:
         sigma = ZZ(2)
     else:
@@ -183,8 +183,8 @@ def _invariants_2_even(b1, q2):
     xi_hat_dash = xi_to_xi_dash(xi_hat)
     # Definition of eta_tilde
     if b1.type == 'u' and small_d(q2, 2) % 2 == 0:
-        _q = QuadraticForm(b1.mat(row=1, col=1) * two)
-        eta_tilde = eta_p(_q, 2)
+        _q = QuadraticForm(b1.gram_mat.submatrix(row=1, col=1) * two)
+        eta_tilde = eta_p(_q + q2, 2)
     elif b1.type != 'u' and xi_hat != 0:
         eta_tilde = ((-1)**(((n-1)**2 - 1)//8) * q2.hasse_invariant__OMeara(2)
                      * hilbert_symbol(two**m,
@@ -207,7 +207,7 @@ def _invariants_2_odd(b1, q2):
     eta = eta_p(q, 2)
     eta_hat = eta_p(q2, 2)
     q3 = QuadraticForm(matrix([[2*(two**m)]])) + q2
-    if b1.type == 'u' and small_d(q3, 2) % 2 == 0:
+    if b1.type != 'u' and small_d(q3, 2) % 2 == 0:
         xi_tilde = 1
     else:
         xi_tilde = 0
@@ -228,10 +228,10 @@ def _rat_funcs_even(n, xi=None, xi_dash=None, xi_hat=None,
     denom = 1 - two**(n+1) * X**2
     res['11'] = num/denom
     # 10
+    expt = delta - delta_tilde + xi**2 + sigma
     num = ((-1)**(xi + 1) * xi_dash * eta_tilde *
            (1 - two**(n//2 + 1) * X * xi) *
-           (2**(n//2) * X)**(delta - delta_tilde + xi**2 + sigma) *
-           2**(delta//2))
+           X**expt * 2**(delta / two + n//2 * expt))
     denom = 1 - two**(n+1) * X**2
     res['10'] = num/denom
     # 21
@@ -239,10 +239,11 @@ def _rat_funcs_even(n, xi=None, xi_dash=None, xi_hat=None,
     denom = 1 - 2**(n//2) * xi_hat * X
     res['21'] = num/denom
     # 20
+    expt = delta_tilde - delta_hat + 2 - xi_hat**2 - sigma
     num = ((-1)**xi_hat * xi_hat_dash * eta_tilde *
-           (2**((n - 2)//2) * X)**(delta_tilde - delta_hat + 2
-                                   - xi_hat**2 - sigma) *
-           2**((2*delta_tilde - delta_hat + 2 - 2*sigma)/2))
+           X**expt *
+           2**((n - 2)//2 * expt +
+               (2*delta_tilde - delta_hat + 2 - 2*sigma)/2))
     denom = 1 - 2**(n//2) * X * xi_hat
     res['20'] = num/denom
     return res
@@ -257,10 +258,10 @@ def _rat_funcs_odd(n, sigma=None, delta=None, delta_tilde=None,
     denom = 1 - 2**((n+1)//2) * xi_tilde * X
     res['11'] = num/denom
     # 10
+    expt = delta - delta_tilde + 2 - xi_tilde**2 + sigma
     num = ((-1)**xi_tilde * eta *
-           (2**((n-1)//2)*X)**(delta - delta_tilde + 2 - xi_tilde**2 + sigma)
-           *
-           2**((2*delta - delta_tilde + 2 + sigma)/2))
+           X**expt *
+           2**((n-1)//2 * expt + (2*delta - delta_tilde + 2 + sigma)/2))
     denom = 1 - 2**((n + 1)//2) * X * xi_tilde
     res['10'] = num/denom
     # 21
@@ -268,11 +269,10 @@ def _rat_funcs_odd(n, sigma=None, delta=None, delta_tilde=None,
     denom = 1 - 2**n * X**2
     res['21'] = num/denom
     # 20
+    expt = delta_tilde - delta_hat + xi_tilde**2 - sigma
     num = ((-1)**(xi_tilde + 1) * eta_hat *
            (1 - 2**((n + 1)//2) * X * xi_tilde) *
-           (2**((n - 1)//2) * X)**(delta_tilde - delta_hat +
-                                   xi_tilde**2 - sigma) *
-           2**((delta_tilde - sigma)/2))
+           X**expt * 2**((n - 1)//2 * expt + (delta_tilde - sigma)/2))
     denom = 1 - 2**n * X**2
     res['20'] = num/denom
     return res
