@@ -150,7 +150,7 @@ def _invariants_2_common(b1, q2):
     n = q2.dim() + 2
     m = b1.m
     q = _from_b1_q2_to_q(b1, q2)
-    q3 = QuadraticForm(matrix([[2*(two**m)]])) + q2
+    q3 = QuadraticForm(matrix([[two**m]]) * 2) + q2
     delta = delta_p(q, 2)
     delta_tilde = delta_p(q3, 2)
     delta_hat = delta_p(q2, 2)
@@ -206,7 +206,7 @@ def _invariants_2_odd(b1, q2):
     q = _from_b1_q2_to_q(b1, q2)
     eta = eta_p(q, 2)
     eta_hat = eta_p(q2, 2)
-    q3 = QuadraticForm(matrix([[2*(two**m)]])) + q2
+    q3 = QuadraticForm(matrix([[two**m]]) * 2) + q2
     if b1.type != 'u' and small_d(q3, 2) % 2 == 0:
         xi_tilde = 1
     else:
