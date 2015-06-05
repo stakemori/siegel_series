@@ -1,19 +1,10 @@
 # -*- coding: utf-8; mode: sage -*-
 
 import unittest
-from sage.all import ZZ, QuadraticForm, kronecker_symbol, random_matrix
-
+from sage.all import ZZ, QuadraticForm, kronecker_symbol
+from siegel_series.tests.utils import random_even_symm_mat
 from siegel_series.impl import (jordan_blocks_odd, jordan_blocks_2,
                                 _blocks_to_quad_form)
-
-def random_even_symm_mat(n):
-    while True:
-        m = random_matrix(ZZ, n)
-        m = m + m.transpose()
-        for a in range(n):
-            m[(a, a)] = m[(a, a)] * ZZ(2)
-        if not m.is_singular():
-            return m
 
 
 class JordanBlockTest(unittest.TestCase):

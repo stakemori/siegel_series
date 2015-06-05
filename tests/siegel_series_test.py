@@ -6,6 +6,7 @@ from sage.all import (matrix, QQ, ZZ, prime_factors, mul, QuadraticForm,
 from degree2.all import eisenstein_series_degree2
 from siegel_series.impl import siegel_series_polynomial, X
 from siegel_series.local_invariants import zeta_p, e_p
+from siegel_series.tests.utils import random_even_symm_mat
 
 h_mat = matrix([[QQ(2), QQ(1)/QQ(2)],
                 [QQ(1)/QQ(2), QQ(1)]])
@@ -64,9 +65,9 @@ class SiegelSeriesTest(unittest.TestCase):
         self.assert_func_eq(block_diagonal_matrix(
             diagonal_matrix([1]), h_mat) * ZZ(2)**10, 2)
         self.assert_func_eq(block_diagonal_matrix(
-            ZZ(2) * diagonal_matrix([1]), h_mat) * ZZ(2)**10, 2)
+            ZZ(2**3) * diagonal_matrix([1]), h_mat) * ZZ(2)**10, 2)
         self.assert_func_eq(block_diagonal_matrix(
-            diagonal_matrix([1]), ZZ(2) * h_mat) * ZZ(2)**10, 2)
+            diagonal_matrix([1]), ZZ(2**3) * h_mat) * ZZ(2)**10, 2)
 
     def test_degree3_func_eq_odd(self):
         p = ZZ(23)
@@ -76,7 +77,38 @@ class SiegelSeriesTest(unittest.TestCase):
         self.assert_func_eq(mat, p)
         self.assert_func_eq(mat1, p)
 
+    def test_degree4_func_eq_2(self):
+        self.assert_func_eq(
+            block_diagonal_matrix(
+                diagonal_matrix([1]) * ZZ(2)**2,
+                diagonal_matrix([ZZ(3)]),
+                h_mat), 2)
+        self.assert_func_eq(
+            block_diagonal_matrix(
+                h_mat, h_mat) * ZZ(2)**3, 2)
+        self.assert_func_eq(
+            block_diagonal_matrix(
+                ZZ(2) * y_mat,
+                diagonal_matrix([ZZ(1), ZZ(3)])), 2)
+        self.assert_func_eq(
+            diagonal_matrix([ZZ(1), ZZ(3), ZZ(5), ZZ(7) * ZZ(2)**3])
+            * ZZ(2)**10, 2)
 
+    def test_degree4_func_eq_odd(self):
+        p = ZZ(7)
+        u = least_quadratic_nonresidue(p)
+        self.assert_func_eq(
+            diagonal_matrix([ZZ(1), p * u, p**2, p**3]) * p**10,
+            p)
+        self.assert_func_eq(
+            diagonal_matrix([u, p * u, p**2, p**3]), p)
+
+    def test_func_eq_general_degree_random(self):
+        for _ in range(30):
+            for n in [3, 4, 5, 6, 7]:
+                m = random_even_symm_mat(n)
+                for p in [ZZ(2), ZZ(3), ZZ(5), ZZ(7)]:
+                    self.assert_func_eq(m, p)
 
 suite = unittest.TestLoader().loadTestsFromTestCase(SiegelSeriesTest)
 unittest.TextTestRunner(verbosity=2).run(suite)
