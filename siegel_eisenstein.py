@@ -1,5 +1,5 @@
 # -*- coding: utf-8; mode: sage -*-
-from sage.all import ZZ, prime_factors
+from sage.all import ZZ, prime_factors, zeta, quadratic_L_function__exact
 from siegel_series.impl import siegel_series_polynomial, X
 import operator
 
@@ -14,7 +14,7 @@ class SiegelEisensteinSeries(object):
 
     @property
     def weight(self):
-        return self._weight
+        return ZZ(self._weight)
 
     @property
     def degree(self):
@@ -35,4 +35,15 @@ class SiegelEisensteinSeries(object):
                           (siegel_series_polynomial(mat, p).subs(
                               {X: p**(n + 1 - k)})
                            for p in prime_factors(_mat_det)))
-
+        if n % 2 == 0:
+            quadl = quadratic_L_function__exact(
+                1 + n//2 - k, (-1)**(n//2) * mat.det)
+            prod = reduce(operator.mul,
+                          (zeta(1 + 2*i - 2*k)**(-1)
+                           for i in range(1, n//2 + 1)), ZZ(1))
+            return ZZ(2)**(n//2) * zeta(1 - k)**(-1) * quadl * prod * unramfac
+        else:
+            prod = reduce(operator.mul,
+                          (zeta(1 + 2*i - 2*k)**(-1)
+                           for i in range(1, (n - 1)//2 + 1)), ZZ(1))
+            return ZZ(2)**((n + 1)//2) * zeta(1 - k)**(-1) * prod * unramfac
