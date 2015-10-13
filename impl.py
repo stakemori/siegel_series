@@ -17,6 +17,7 @@ from siegel_series.rec_coeff import (cbb2_0, cbb2_1, _pol_ring, JordanBlock2,
 
 X = _pol_ring().gens()[0]
 
+
 @cached_function
 def does_2adically_rep_zero(a, b, c):
     '''
@@ -27,8 +28,8 @@ def does_2adically_rep_zero(a, b, c):
     for x in [0, 1, 4]:
         for y in [0, 1, 4]:
             for z in [0, 1, 4]:
-                if (any((w%2 for w in [x, y, z])) and
-                    (a * x + b * y + c * z) % 8 == 0):
+                if (any((w % 2 for w in [x, y, z])) and
+                        (a * x + b * y + c * z) % 8 == 0):
                     return True
     return False
 
@@ -47,12 +48,12 @@ def _trans_jordan_dec_2(us):
     if len(us) <= 2:
         return us
     u1, u2, u3 = us[:3]
-    u = u1*u2*u3
+    u = u1 * u2 * u3
     l = _trans_jordan_dec_2(us[3:])
     if does_2adically_rep_zero(u1, u2, u3):
         l.extend([(-u) % 8, hyp2_name])
     else:
-        l.extend([(3*u)%8, y2_name])
+        l.extend([(3 * u) % 8, y2_name])
     l_diag = [a for a in l if a not in [hyp2_name, y2_name]]
     if len(l_diag) <= 2:
         return l
@@ -60,6 +61,7 @@ def _trans_jordan_dec_2(us):
         l_non_diag = [a for a in l if a in [hyp2_name, y2_name]]
         l1 = _trans_jordan_dec_2(l_diag)
         return l1 + l_non_diag
+
 
 def jordan_blocks_odd(q, p):
     '''
@@ -140,7 +142,6 @@ def jordan_blocks_2(q):
     return res1
 
 
-
 def siegel_series_polynomial(B, p):
     '''
     B is a half integral matrix and p is a rational prime.
@@ -150,27 +151,29 @@ def siegel_series_polynomial(B, p):
     q = QuadraticForm(ZZ, B * 2)
     if p == 2:
         blcs = jordan_blocks_2(q)
-        return _siegel_series_polynomial_2(blcs)
+        return _siegel_series_polynomial_2(tuple(blcs))
     else:
         blcs = jordan_blocks_odd(q, p)
-        return _siegel_series_polynomial_odd(blcs, p)
+        return _siegel_series_polynomial_odd(tuple(blcs), p)
 
 
 def _blocks_to_quad_form(blcs, p):
-    h = matrix([[QQ(0), QQ(1)/QQ(2)],
-                [QQ(1)/QQ(2), QQ(0)]])
-    y = matrix([[QQ(1), QQ(1)/QQ(2)],
-                [QQ(1)/QQ(2), QQ(1)]])
+    h = matrix([[QQ(0), QQ(1) / QQ(2)],
+                [QQ(1) / QQ(2), QQ(0)]])
+    y = matrix([[QQ(1), QQ(1) / QQ(2)],
+                [QQ(1) / QQ(2), QQ(1)]])
     mat_dict = {"h": h, "y": y}
     mats_w_expt = [(expt, mat_dict[qf] if qf in ("h", "y") else matrix([[qf]]))
-                  for expt, qf in blcs]
-    qfs = [QuadraticForm(ZZ, m * ZZ(2) * p**expt) for expt, m in mats_w_expt]
+                   for expt, qf in blcs]
+    qfs = [QuadraticForm(ZZ, m * ZZ(2) * p ** expt) for expt, m in mats_w_expt]
     return reduce(operator.add, qfs)
 
 
 def swap_ls(l, i, j):
     l[i], l[j] = l[j], l[i]
 
+
+# @cached_function
 def _siegel_series_polynomial_2(blcs):
     non_diags = ("h", "y")
     max_expt = blcs[0][0]
@@ -188,8 +191,8 @@ def _siegel_series_polynomial_2(blcs):
 
         blcs_q2 = blcs[1:]
         q2 = _blocks_to_quad_form(blcs_q2, 2)
-        pol = _siegel_series_polynomial_2(blcs_q2)
-        return (cbb2_1(q, q2, 2) * pol.subs({X: ZZ(2)*X}) +
+        pol = _siegel_series_polynomial_2(tuple(blcs_q2))
+        return (cbb2_1(q, q2, 2) * pol.subs({X: ZZ(2) * X}) +
                 cbb2_0(q, q2, 2) * pol)
 
     # Else use the recursive equation given in Theorem 4.2.
@@ -212,13 +215,14 @@ def _siegel_series_polynomial_2(blcs):
     times2 = {X: ZZ(2) * X}
     times4 = {X: ZZ(4) * X}
     coeffs = [c11 * c21.subs(times2),
-              c11*c20.subs(times2) + c10*c21,
+              c11 * c20.subs(times2) + c10 * c21,
               c10 * c20]
-    pol = _siegel_series_polynomial_2(blcs_q2)
+    pol = _siegel_series_polynomial_2(tuple(blcs_q2))
     pols = [pol.subs(times4), pol.subs(times2), pol]
-    return sum((a*b for a, b in zip(coeffs, pols)))
+    return sum((a * b for a, b in zip(coeffs, pols)))
 
 
+# @cached_function
 def _siegel_series_polynomial_odd(blcs, p):
     q = _blocks_to_quad_form(blcs, p)
     # Use known formulas when dim(q) = 1 or = 2.
@@ -228,15 +232,14 @@ def _siegel_series_polynomial_odd(blcs, p):
         return _siegel_series_dim2(q, p)
     # Else use the recursive equation given in Theorem 4.1
     blcs_q2 = blcs[1:]
-    pol = _siegel_series_polynomial_odd(blcs_q2, p)
+    pol = _siegel_series_polynomial_odd(tuple(blcs_q2), p)
     q2 = _blocks_to_quad_form(blcs_q2, p)
     return (cbb2_1(q, q2, p) * pol.subs({X: p * X}) +
             cbb2_0(q, q2, p) * pol)
 
 
-
 def _siegel_series_dim1(q, p):
-    return sum(((p*X)**a for a in range(q.content().valuation(p) + 1)))
+    return sum(((p * X) ** a for a in range(q.content().valuation(p) + 1)))
 
 
 def _siegel_series_dim2(q, p):
@@ -252,7 +255,7 @@ def __siegel_series_dim2(p, a, b):
     if b == 0:
         return 0
     a = min(a, b - 1)
-    r1 = (1 - (p**2 * X)**(a + 1)) / (1 - p**2 * X)
-    rn2 = (p**3 * X**2)**b * p*X - p**b * (p * X)**(2*b - a)
+    r1 = (1 - (p ** 2 * X) ** (a + 1)) / (1 - p ** 2 * X)
+    rn2 = (p ** 3 * X ** 2) ** b * p * X - p ** b * (p * X) ** (2 * b - a)
     rd2 = p * X - 1
-    return (r1 - rn2/rd2) / (1 - p**3 * X**2)
+    return (r1 - rn2 / rd2) / (1 - p ** 3 * X ** 2)
