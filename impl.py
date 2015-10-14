@@ -182,9 +182,9 @@ def _siegel_series_polynomial_2(blcs):
     q = _blocks_to_quad_form(blcs, 2)
     # Use known formulas if dim(q) in (1, 2).
     if q.dim() == 1:
-        return _siegel_series_dim1(q, ZZ(2))
+        return siegel_series_dim1(q, ZZ(2))
     elif q.dim() == 2:
-        return _siegel_series_dim2(q, ZZ(2))
+        return siegel_series_dim2(q, ZZ(2))
 
     if len(unit_diags_first_blc) == 1:
         # Use the recursive equation given in Theorem 4.1.
@@ -227,9 +227,9 @@ def _siegel_series_polynomial_odd(blcs, p):
     q = _blocks_to_quad_form(blcs, p)
     # Use known formulas when dim(q) = 1 or = 2.
     if q.dim() == 1:
-        return _siegel_series_dim1(q, p)
+        return siegel_series_dim1(q, p)
     elif q.dim() == 2:
-        return _siegel_series_dim2(q, p)
+        return siegel_series_dim2(q, p)
     # Else use the recursive equation given in Theorem 4.1
     blcs_q2 = blcs[1:]
     pol = _siegel_series_polynomial_odd(tuple(blcs_q2), p)
@@ -238,20 +238,20 @@ def _siegel_series_polynomial_odd(blcs, p):
             cbb2_0(q, q2, p) * pol)
 
 
-def _siegel_series_dim1(q, p):
+def siegel_series_dim1(q, p):
     return sum(((p * X) ** a for a in range(q.content().valuation(p) + 1)))
 
 
-def _siegel_series_dim2(q, p):
+def siegel_series_dim2(q, p):
     det_4 = q.Gram_det() * ZZ(4)
     c = q.content().valuation(p)
     fd = fundamental_discriminant(-det_4)
     f = (valuation(det_4, p) - valuation(fd, p)) / ZZ(2)
-    return (__siegel_series_dim2(p, c, f + 1) -
-            kronecker_symbol(fd, p) * p * X * __siegel_series_dim2(p, c, f))
+    return (_siegel_series_dim2(p, c, f + 1) -
+            kronecker_symbol(fd, p) * p * X * _siegel_series_dim2(p, c, f))
 
 
-def __siegel_series_dim2(p, a, b):
+def _siegel_series_dim2(p, a, b):
     if b == 0:
         return 0
     a = min(a, b - 1)
