@@ -53,17 +53,13 @@ class SiegelEisensteinSeries(object):
                            for i in range(1, (n - 1) // 2 + 1)), ZZ(1)) ** (-1)
             return ZZ(2) ** ((n + 1) // 2) * zeta(1 - k) ** (-1) * prod * unramfac
 
-    def fourier_coefficient(self, mat, check=False):
+    def fourier_coefficient(self, mat):
         '''Assuming mat is a half-integral, semi positive definite matrix,
         returns the Fourier coefficient at mat.
-        If check is True, then it checks mat is semi-positive definite.
         '''
         if mat == 0:
             return QQ(1)
         n = mat.ncols()
-        if check:
-            if not all(a >= 0 for a in mat.indefinite_factorization(algoritm='symmetric')[1]):
-                return QQ(0)
         MZ = MatrixSpace(ZZ, n)
         _, u, _ = MZ(mat * 2, n).smith_form()
         r = mat.rank()
