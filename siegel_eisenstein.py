@@ -1,6 +1,7 @@
 # -*- coding: utf-8; mode: sage -*-
-from sage.all import ZZ, prime_factors, zeta, quadratic_L_function__exact, QQ, MatrixSpace
+from sage.all import ZZ, prime_factors, zeta, quadratic_L_function__exact, QQ
 from siegel_series.impl import siegel_series_polynomial, X
+from siegel_series.utils import non_deg_submatrix
 import operator
 
 
@@ -65,8 +66,7 @@ class SiegelEisensteinSeries(object):
         if mat == 0:
             return QQ(1)
         n = mat.ncols()
-        MZ = MatrixSpace(ZZ, n)
-        _, u, _ = MZ(mat * 2, n).smith_form()
+        u = non_deg_submatrix(mat)
         r = mat.rank()
         if r == n:
             return self._fourier_coefficient_full_rank(mat)
