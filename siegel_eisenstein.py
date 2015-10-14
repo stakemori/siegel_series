@@ -27,6 +27,7 @@ class SiegelEisensteinSeries(object):
         '''
         Assuming mat is a positive definite, half-integral matrix,
         it returns the Fourier coefficient of self at the matrix.
+        We normalize the Siegel Eisenstein series so that the constant term is equal to 1.
         cf. S. Takemori, Siegel Eisenstein series of degree n and Lambda-adic Eisenstein series.
         '''
         n = self.degree
