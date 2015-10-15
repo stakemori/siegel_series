@@ -156,7 +156,7 @@ def _invariants_2_common(b1, q2):
     n = q2.dim() + 2
     m = b1.m
     q = _from_b1_q2_to_q(b1, q2)
-    q3 = QuadraticForm(matrix([[two ** m]]) * 2) + q2
+    q3 = QuadraticForm(ZZ, matrix([[two ** m]]) * 2) + q2
     delta = delta_p(q, 2)
     delta_tilde = delta_p(q3, 2)
     delta_hat = delta_p(q2, 2)
@@ -190,7 +190,7 @@ def _invariants_2_even(b1, q2):
     xi_hat_dash = xi_to_xi_dash(xi_hat)
     # Definition of eta_tilde
     if b1.type == 'u' and small_d(q2, 2) % 2 == 0:
-        _q = QuadraticForm(b1.gram_mat.submatrix(row=1, col=1) * two)
+        _q = QuadraticForm(ZZ, b1.gram_mat.submatrix(row=1, col=1) * two)
         eta_tilde = eta_p(_q + q2, 2)
     elif b1.type != 'u' and xi_hat != 0:
         eta_tilde = ((-1) ** (((n - 1) ** 2 - 1) // 8) * q2.hasse_invariant__OMeara(2)
@@ -214,7 +214,7 @@ def _invariants_2_odd(b1, q2):
     q = _from_b1_q2_to_q(b1, q2)
     eta = eta_p(q, 2)
     eta_hat = eta_p(q2, 2)
-    q3 = QuadraticForm(matrix([[two ** m]]) * 2) + q2
+    q3 = QuadraticForm(ZZ, matrix([[two ** m]]) * 2) + q2
     if b1.type != 'u' and small_d(q3, 2) % 2 == 0:
         xi_tilde = 1
     else:
@@ -239,7 +239,7 @@ def _rat_funcs_even(n, xi=None, xi_dash=None, xi_hat=None,
     expt = delta - delta_tilde + xi ** 2 + sigma
     num = ((-1) ** (xi + 1) * xi_dash * eta_tilde *
            (1 - two ** (n // 2 + 1) * X * xi) *
-           X ** expt * 2 ** (delta / two + n // 2 * expt))
+           X ** expt * 2 ** (delta / two + (n // 2) * expt))
     denom = 1 - two ** (n + 1) * X ** 2
     res['10'] = num / denom
     # 21
@@ -250,8 +250,8 @@ def _rat_funcs_even(n, xi=None, xi_dash=None, xi_hat=None,
     expt = delta_tilde - delta_hat + 2 - xi_hat ** 2 - sigma
     num = ((-1) ** xi_hat * xi_hat_dash * eta_tilde *
            X ** expt *
-           2 ** ((n - 2) // 2 * expt +
-                 (2 * delta_tilde - delta_hat + 2 - 2 * sigma) / 2))
+           2 ** (((n - 2) // 2) * expt +
+                 (2 * delta_tilde - delta_hat + 2 - 2 * sigma) / two))
     denom = 1 - 2 ** (n // 2) * X * xi_hat
     res['20'] = num / denom
     return res
