@@ -30,7 +30,7 @@ def r_n_m_iter(A1, A2):
             yield (R, mat)
 
 
-def eisenstein_pull_back_coeff(k, A1, A2, func=None):
+def eisenstein_pullback_coeff(k, A1, A2, func=None):
     '''Return Fourier coefficient of pull back of Siegel Eisenstein series of degree n.
     Here n = A1.ncols() + A2.ncols().
     return sum(func(a(block_matrix([[A1, R/2], [R^t/2, A2]]); E_{k, n}), A1, A2, R))
