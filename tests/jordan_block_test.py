@@ -8,6 +8,7 @@ from siegel_series.impl import (jordan_blocks_odd, jordan_blocks_2,
 
 
 class JordanBlockTest(unittest.TestCase):
+
     def assert_jordan_blcs(self, p, mat):
         p = ZZ(p)
         q = QuadraticForm(ZZ, 2 * mat)
@@ -16,7 +17,7 @@ class JordanBlockTest(unittest.TestCase):
         else:
             blcs = jordan_blocks_odd(q, p)
         q1 = _blocks_to_quad_form(blcs, p)
-        det_frac = q.det()/q1.det()
+        det_frac = q.det() / q1.det()
         if p == 2:
             should1 = det_frac % 8
         else:
@@ -24,7 +25,7 @@ class JordanBlockTest(unittest.TestCase):
         self.assertTrue(det_frac.valuation(p) == 0)
         self.assertEqual(q.content().valuation(p), q1.content().valuation(p))
         self.assertEqual(should1, 1)
-        self.assertEqual(kronecker_symbol(q.det()/q1.det(), p), 1)
+        self.assertEqual(kronecker_symbol(q.det() / q1.det(), p), 1)
         self.assertEqual(q.hasse_invariant(p), q1.hasse_invariant(p))
 
     def test_jordan_blcs(self):

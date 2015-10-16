@@ -1,6 +1,7 @@
 # -*- coding: utf-8; mode: sage -*-
 from sage.all import random_matrix, ZZ
 
+
 def random_even_symm_mat(n):
     while True:
         m = random_matrix(ZZ, n)

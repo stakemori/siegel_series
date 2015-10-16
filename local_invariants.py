@@ -11,7 +11,7 @@ def _chi_p_odd(a, p):
     p = ZZ(p)
     r = valuation(a, p)
     if r % 2 == 0:
-        c = a//(p**r)
+        c = a // (p ** r)
         return kronecker_symbol(c, p)
     else:
         return 0
@@ -23,7 +23,7 @@ def _chi_2(a):
     if r % 2 == 1:
         return 0
     else:
-        c = a//(two**r)
+        c = a // (two ** r)
         rem = c % 8
         if rem == 1:
             return 1
@@ -48,9 +48,9 @@ def eta_p(q, p):
     hasse_inv = q.hasse_invariant__OMeara(p)
     detb = q.Gram_det()
     n = q.dim()
-    h1 = hilbert_symbol(detb, detb * (-1)**((n-1)//2), p)
+    h1 = hilbert_symbol(detb, detb * (-1) ** ((n - 1) // 2), p)
     h2 = hilbert_symbol(-1, -1, p)
-    return hasse_inv * h1 * h2**((n**2 - 1)//8)
+    return hasse_inv * h1 * h2 ** ((n ** 2 - 1) // 8)
 
 
 def xi_p(q, p):
@@ -59,16 +59,16 @@ def xi_p(q, p):
     p: a prime number
     '''
     n = q.dim()
-    return ZZ(chi_p((-1)**(n//2) * q.Gram_det(), p))
+    return ZZ(chi_p((-1) ** (n // 2) * q.Gram_det(), p))
 
 
 def xi_prime_p(q, p):
     xi = xi_p(q, p)
-    return 1 + xi - xi**2
+    return 1 + xi - xi ** 2
 
 
 def xi_to_xi_dash(xi):
-    return 1 + xi - xi**2
+    return 1 + xi - xi ** 2
 
 
 def small_d(q, p):
@@ -77,7 +77,7 @@ def small_d(q, p):
     '''
     two = ZZ(2)
     n = q.dim()
-    larged = two**(2*(n//2)) * q.Gram_det()
+    larged = two ** (2 * (n // 2)) * q.Gram_det()
     return valuation(larged, p)
 
 
@@ -89,7 +89,7 @@ def delta_p(q, p):
     db = small_d(q, p)
     if n % 2 == 0:
         dl = 1 if p == 2 else 0
-        return 2 * ((db + 1 - dl)//2)
+        return 2 * ((db + 1 - dl) // 2)
     else:
         return db
 
@@ -103,7 +103,7 @@ def e_p(q, p):
     if n % 2:
         return dlt
     else:
-        return dlt - ZZ(2) + ZZ(2) * xi_p(q, p)**2
+        return dlt - ZZ(2) + ZZ(2) * xi_p(q, p) ** 2
 
 
 def zeta_p(q, p):
