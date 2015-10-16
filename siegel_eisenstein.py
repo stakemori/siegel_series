@@ -1,8 +1,13 @@
 # -*- coding: utf-8; mode: sage -*-
-from sage.all import ZZ, prime_factors, zeta, quadratic_L_function__exact, QQ
+from sage.all import ZZ, prime_factors, quadratic_L_function__exact, QQ
+from sage.all import zeta as _zeta
 from siegel_series.impl import siegel_series_polynomial, X
 from siegel_series.utils import non_deg_submatrix
 import operator
+
+
+def zeta(s):
+    return _zeta(ZZ(s))
 
 
 class SiegelEisensteinSeries(object):
@@ -12,8 +17,8 @@ class SiegelEisensteinSeries(object):
     '''
 
     def __init__(self, weight=None, degree=None):
-        self._weight = weight
-        self._degree = degree
+        self._weight = ZZ(weight)
+        self._degree = ZZ(degree)
         self._fc_dct = {}
 
     @property
