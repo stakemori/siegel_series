@@ -33,14 +33,15 @@ def r_n_m_iter(A1, A2):
 def eisenstein_pullback_coeff(k, A1, A2, func=None):
     '''Return Fourier coefficient of pull back of Siegel Eisenstein series of degree n.
     Here n = A1.ncols() + A2.ncols().
-    return sum(func(a(block_matrix([[A1, R/2], [R^t/2, A2]]); E_{k, n}), A1, A2, R))
-    Here a(T; E_{k, n}) is the Fourier coefficient of Siegel Eisenstein series.
+    return sum(func(a(mat; E_{k, n}), A1, A2, R, mat))
+    Here a(T; E_{k, n}) is the Fourier coefficient of Siegel Eisenstein series and
+    mat = block_matrix([[A1, R/2], [R^t/2, A2]]).
     '''
     n = A1.ncols() + A2.ncols()
     if func is None:
-        func = lambda a, a1, a2, r: a
+        func = lambda a, a1, a2, r, mat: a
     es = sess(weight=k, degree=n)
     res = QQ(0)
     for R, mat in r_n_m_iter(A1, A2):
-        res += func(es.fourier_coefficient(mat), A1, A2, R)
+        res += func(es.fourier_coefficient(mat), A1, A2, R, mat)
     return res
