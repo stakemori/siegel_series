@@ -134,10 +134,7 @@ def jordan_blocks_2(q):
                           key=lambda x: -x[0]):
         unit_diags = [(a, qf) for a, qf in blcs if qf not in non_diags]
         non_unit_diags = [(a, qf) for a, qf in blcs if qf in non_diags]
-        if len(unit_diags) == 1:
-            blcs = unit_diags + non_unit_diags
-        else:
-            blcs = unit_diags + non_unit_diags
+        blcs = unit_diags + non_unit_diags
         res1.extend(blcs)
     return res1
 
