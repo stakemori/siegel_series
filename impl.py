@@ -137,7 +137,7 @@ def jordan_blocks_2(q):
         if len(unit_diags) == 1:
             blcs = unit_diags + non_unit_diags
         else:
-            blcs = non_unit_diags + unit_diags
+            blcs = unit_diags + non_unit_diags
         res1.extend(blcs)
     return res1
 
