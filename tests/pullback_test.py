@@ -1,5 +1,5 @@
 from sage.all import ZZ, matrix, diagonal_matrix, eisenstein_series_qexp
-from siegel_series.pull_back_of_siegel_eisen import eisenstein_pullback_coeff
+from siegel_series.pullback_of_siegel_eisen import eisenstein_pullback_coeff
 from degree2.all import eisenstein_series_degree2
 from degree2.basic_operation import PrecisionDeg2
 import unittest
