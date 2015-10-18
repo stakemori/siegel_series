@@ -1,11 +1,23 @@
 # -*- coding: utf-8; mode: sage -*-
 
 import unittest
-from sage.all import ZZ, kronecker_symbol, valuation, gcd, mul, QuadraticForm
+from sage.all import ZZ, kronecker_symbol, valuation, gcd, mul, QuadraticForm, matrix, QQ
 from siegel_series.tests.utils import random_even_symm_mat
-from siegel_series.impl import (jordan_blocks_odd, jordan_blocks_2,
-                                _blocks_to_quad_form)
+from siegel_series.impl import jordan_blocks_odd, jordan_blocks_2
 from siegel_series.jordan_block import _jordan_decomposition_odd_p
+import operator
+
+
+def _blocks_to_quad_form(blcs, p):
+    h = matrix([[QQ(0), QQ(1) / QQ(2)],
+                [QQ(1) / QQ(2), QQ(0)]])
+    y = matrix([[QQ(1), QQ(1) / QQ(2)],
+                [QQ(1) / QQ(2), QQ(1)]])
+    mat_dict = {"h": h, "y": y}
+    mats_w_expt = [(expt, mat_dict[qf] if qf in ("h", "y") else matrix([[qf]]))
+                   for expt, qf in blcs]
+    qfs = [QuadraticForm(ZZ, m * ZZ(2) * p ** expt) for expt, m in mats_w_expt]
+    return reduce(operator.add, qfs)
 
 
 def _i_func(q):
