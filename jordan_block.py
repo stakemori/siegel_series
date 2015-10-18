@@ -106,6 +106,17 @@ class JordanBlocks(object):
                     res *= p ** a * b
             return res
 
+    def __radd__(self, other):
+        if isinstance(other, JordanBlock2):
+            if other.type in ('h', 'y'):
+                blcs = [(other.m, other.typs)] + self.blocks
+            else:
+                blcs = [(other.m, other._mat_prim[i])
+                        for i in range(2)] + self.blocks
+            return JordanBlocks(blcs, two)
+        else:
+            raise NotImplementedError
+
 
 def bracket_action(a, b):
     return b.transpose() * a * b
