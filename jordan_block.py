@@ -1,6 +1,6 @@
 from sage.all import (cached_function, ZZ, QQ, Integer, matrix, identity_matrix,
                       valuation, least_quadratic_nonresidue, legendre_symbol,
-                      mul, hilbert_symbol)
+                      mul, hilbert_symbol, cached_method)
 from degree2.utils import list_group_by
 from itertools import groupby
 
@@ -63,6 +63,7 @@ class JordanBlocks(object):
     def p(self):
         return self._p
 
+    @cached_method
     def dim(self):
         p = self.p
         if p != 2:
@@ -70,6 +71,7 @@ class JordanBlocks(object):
         else:
             return sum(2 if isinstance(b, str) else 1 for _, b in self.blocks)
 
+    @cached_method
     def hasse_invariant__OMeara(self):
         p = self.p
         if p != 2:
@@ -92,6 +94,7 @@ class JordanBlocks(object):
     def content_order(self):
         return min([a for a, _ in self.blocks])
 
+    @cached_method
     def Gram_det(self):
         p = self.p
         if p != 2:
