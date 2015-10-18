@@ -40,12 +40,12 @@ def chi_p(a, p):
         return _chi_p_odd(a, p)
 
 
-def eta_p(q, p):
+def eta_p(q):
     '''
-    q: an instance of QuadraticForm
-    p: a prime number
+    q: an instance of jordan_block.JordanBlocks.
     '''
-    hasse_inv = q.hasse_invariant__OMeara(p)
+    p = q.p
+    hasse_inv = q.hasse_invariant__OMeara()
     detb = q.Gram_det()
     n = q.dim()
     h1 = hilbert_symbol(detb, detb * (-1) ** ((n - 1) // 2), p)
@@ -53,17 +53,17 @@ def eta_p(q, p):
     return hasse_inv * h1 * h2 ** ((n ** 2 - 1) // 8)
 
 
-def xi_p(q, p):
+def xi_p(q):
     '''
-    q: an instance of QuadraticForm
-    p: a prime number
+    q: an instance of jordan_block.JordanBlocks
     '''
     n = q.dim()
+    p = q.p
     return ZZ(chi_p((-1) ** (n // 2) * q.Gram_det(), p))
 
 
-def xi_prime_p(q, p):
-    xi = xi_p(q, p)
+def xi_prime_p(q):
+    xi = xi_p(q)
     return 1 + xi - xi ** 2
 
 
@@ -71,22 +71,24 @@ def xi_to_xi_dash(xi):
     return 1 + xi - xi ** 2
 
 
-def small_d(q, p):
+def small_d(q):
     '''
     d(B) given in Thoerem 3.2.
     '''
     two = ZZ(2)
     n = q.dim()
+    p = q.p
     larged = two ** (2 * (n // 2)) * q.Gram_det()
     return valuation(larged, p)
 
 
-def delta_p(q, p):
+def delta_p(q):
     r'''
     \delta(B) given in Theorem 3.2.
     '''
     n = q.dim()
-    db = small_d(q, p)
+    p = q.p
+    db = small_d(q)
     if n % 2 == 0:
         dl = 1 if p == 2 else 0
         return 2 * ((db + 1 - dl) // 2)
@@ -94,16 +96,16 @@ def delta_p(q, p):
         return db
 
 
-def e_p(q, p):
+def e_p(q):
     '''
     e(B) given in Theorem 3.2.
     '''
     n = q.dim()
-    dlt = delta_p(q, p)
+    dlt = delta_p(q)
     if n % 2:
         return dlt
     else:
-        return dlt - ZZ(2) + ZZ(2) * xi_p(q, p) ** 2
+        return dlt - ZZ(2) + ZZ(2) * xi_p(q) ** 2
 
 
 def zeta_p(q, p):
@@ -111,6 +113,6 @@ def zeta_p(q, p):
     \zeta(B) given in Theorem 3.2.
     '''
     if q.dim() % 2:
-        return eta_p(q, p)
+        return eta_p(q)
     else:
         return ZZ(1)
