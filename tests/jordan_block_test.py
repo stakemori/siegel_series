@@ -1,10 +1,11 @@
 # -*- coding: utf-8; mode: sage -*-
 
 import unittest
-from sage.all import ZZ, QuadraticForm, kronecker_symbol, valuation, gcd
+from sage.all import ZZ, kronecker_symbol, valuation, gcd, mul, QuadraticForm
 from siegel_series.tests.utils import random_even_symm_mat
 from siegel_series.impl import (jordan_blocks_odd, jordan_blocks_2,
                                 _blocks_to_quad_form)
+from siegel_series.jordan_block import _jordan_decomposition_odd_p
 
 
 def _i_func(q):
@@ -39,28 +40,54 @@ class JordanBlockTest(unittest.TestCase):
 
     def assert_jordan_blcs(self, p, mat):
         p = ZZ(p)
+        if p == 2:
+            blcs = jordan_blocks_2(mat)
+        else:
+            blcs = jordan_blocks_odd(mat, p)
+        q = QuadraticForm(ZZ, ZZ(2) * mat)
+        q1 = _blocks_to_quad_form(blcs.blocks, p)
+        self.assertTrue(q.has_equivalent_Jordan_decomposition_at_prime(q1, p))
+
+    def test_jordan_decomposition_odd_p(self):
+        for _ in range(100):
+            S = random_even_symm_mat(5)
+            for p in [3, 5, 7]:
+                self.assertEqual(
+                    kronecker_symbol(
+                        mul(_jordan_decomposition_odd_p(S, p)) / S.det(), p),
+                    1)
+
+    def assert_jordan_blocks_method(self, p, mat):
+        p = ZZ(p)
+        if p == 2:
+            blcs = jordan_blocks_2(mat)
+        else:
+            blcs = jordan_blocks_odd(mat, p)
         q = QuadraticForm(ZZ, 2 * mat)
         if p == 2:
-            blcs = jordan_blocks_2(q)
+            should1 = (q.Gram_det() / blcs.Gram_det()) % 8
         else:
-            blcs = jordan_blocks_odd(q, p)
-        q1 = _blocks_to_quad_form(blcs, p)
-        det_frac = q.det() / q1.det()
-        if p == 2:
-            should1 = det_frac % 8
-        else:
-            should1 = kronecker_symbol(det_frac, p)
-        self.assertTrue(det_frac.valuation(p) == 0)
-        self.assertEqual(q.content().valuation(p), q1.content().valuation(p))
+            should1 = kronecker_symbol((q.Gram_det() / blcs.Gram_det()), p)
         self.assertEqual(should1, 1)
-        self.assertEqual(kronecker_symbol(q.det() / q1.det(), p), 1)
-        self.assertEqual(q.hasse_invariant(p), q1.hasse_invariant(p))
+        self.assertEqual(
+            q.hasse_invariant__OMeara(p), blcs.hasse_invariant__OMeara())
+        self.assertEqual(q.dim(), blcs.dim())
+        self.assertEqual(q.content().valuation(p), blcs.content_order())
+
+    def test_jordan_blocks_method(self):
+        for _ in range(100):
+            for s in [random_even_symm_mat(4),
+                      random_even_symm_mat(5)]:
+                for p in [2, 3, 5, 7]:
+                    self.assert_jordan_blocks_method(p, s)
 
     def test_jordan_blcs(self):
-        for _ in range(30):
+        for _ in range(100):
             m = random_even_symm_mat(5)
+            n = random_even_symm_mat(4)
             for p in [2, 3, 5, 7]:
                 self.assert_jordan_blcs(p, m)
+                self.assert_jordan_blcs(p, n)
 
     def test_assumption(self):
         '''Test assumption of Theorem 4.1 and 4.2 in Katsurada's paper.
@@ -68,8 +95,7 @@ class JordanBlockTest(unittest.TestCase):
         for _ in range(100):
             for n in range(4, 11):
                 m = random_even_symm_mat(n)
-                q = QuadraticForm(ZZ, 2 * m)
-                blcs = jordan_blocks_2(q)
+                blcs = jordan_blocks_2(m).blocks
                 max_expt = blcs[0][0]
                 q2, q2_blc = q2_q2_blc(blcs)
                 while len(q2_blc) > 2:
