@@ -1,6 +1,6 @@
 from sage.all import (cached_function, ZZ, QQ, Integer, matrix, identity_matrix,
                       valuation, least_quadratic_nonresidue, legendre_symbol,
-                      is_odd, mul, hilbert_symbol)
+                      mul, hilbert_symbol)
 from degree2.utils import list_group_by
 from itertools import groupby
 
@@ -8,6 +8,45 @@ _hy_det = {'h': -ZZ(1) / ZZ(4), 'y': ZZ(3) / ZZ(4)}
 _hy_rational_diags = {'h': [ZZ(1), ZZ(-1)], 'y': [ZZ(1), ZZ(3)]}
 
 two = ZZ(2)
+
+# h = matrix([[0, 1/2], [1/2, 0]])
+# y = matrix([[1, 1/2], [1/2, 1]])
+# u1, u2 :units
+# q1 <-> 2^m * diag(u1, u2), h or y.
+
+mat_dict = {"h": matrix([[QQ(0), QQ(1) / QQ(2)],
+                         [QQ(1) / QQ(2), QQ(0)]]),
+            "y": matrix([[QQ(1), QQ(1) / QQ(2)],
+                         [QQ(1) / QQ(2), QQ(1)]])}
+
+
+class JordanBlock2(object):
+
+    def __init__(self, units_or_hy, m):
+        '''
+        units_or_hy is a list of two units or "h" or "y".
+        m is an integer.
+        '''
+        self._m = m
+        if units_or_hy in ("h", "y"):
+            self._type = units_or_hy
+            self._mat_prim = mat_dict[units_or_hy]
+        else:
+            self._type = "u"
+            self._mat_prim = matrix([[units_or_hy[0], 0],
+                                     [0, units_or_hy[1]]])
+
+    @property
+    def gram_mat(self):
+        return self._mat_prim * two ** self.m
+
+    @property
+    def type(self):
+        return self._type
+
+    @property
+    def m(self):
+        return self._m
 
 
 class JordanBlocks(object):
