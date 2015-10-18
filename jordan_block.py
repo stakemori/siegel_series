@@ -29,7 +29,7 @@ class JordanBlocks(object):
         if p != 2:
             return len(self.blocks)
         else:
-            return sum(2 if isinstance(b) else 1 for _, b in self.blocks)
+            return sum(2 if isinstance(b, str) else 1 for _, b in self.blocks)
 
     def hasse_invariant__OMeara(self):
         p = self.p
@@ -62,7 +62,7 @@ class JordanBlocks(object):
             for a, b in self.blocks:
                 # b is 'h' or 'y'
                 if isinstance(b, str):
-                    res *= p ** a * _hy_det[b]
+                    res *= p ** (2 * a) * _hy_det[b]
                 else:
                     res *= p ** a * b
             return res
@@ -197,11 +197,13 @@ def _jordan_decomposition_2(S):
             n -= 2
     res = []
     for m in mat_lst:
-        e = valuation(m[0, 0], two)
         if m.ncols() == 1:
-            u = (m[0, 0] / two ** e) % 8
+            a = m[0, 0]
+            e = valuation(a, two)
+            u = (a / two ** e) % 8
             res.append((e, u))
         else:
+            e = valuation(m[0, 1], two) + 1
             m = m / two ** (e - 1)
             if m.det() % 8 == 3:
                 h_or_y = 'y'
@@ -269,10 +271,10 @@ def jordan_blocks_odd(S, p):
     u = least_quadratic_nonresidue(p)
     for e, ls in groupby(_jordan_decomposition_odd_p(S, p),
                          key=lambda x: valuation(x, p)):
-        ls = list(ls)
+        ls = [x // p ** e for x in ls]
         part_res = [(e, ZZ(1)) for _ in ls]
         if legendre_symbol(mul(ls), p) == -1:
-            part_res[-1] = u
+            part_res[-1] = (e, u)
         res.extend(part_res)
     return JordanBlocks(list(reversed(res)), p)
 
