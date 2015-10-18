@@ -117,6 +117,8 @@ class JordanBlocks(object):
                 blcs = [(other.m, other._mat_prim[i])
                         for i in range(2)] + self.blocks
             return JordanBlocks(blcs, two)
+        elif isinstance(other, JordanBlocks):
+            return JordanBlocks(other.blocks + self.blocks, self.p)
         else:
             raise NotImplementedError
 
