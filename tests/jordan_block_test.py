@@ -2,9 +2,9 @@
 
 import unittest
 from sage.all import ZZ, QuadraticForm, kronecker_symbol, valuation, gcd
-from siegel_series.tests.utils import random_even_symm_mat
-from siegel_series.impl import (jordan_blocks_odd, jordan_blocks_2,
-                                _blocks_to_quad_form)
+from ..tests.utils import random_even_symm_mat
+from ..impl import (jordan_blocks_odd, jordan_blocks_2,
+                    _blocks_to_quad_form)
 
 
 def _i_func(q):

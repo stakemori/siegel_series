@@ -12,8 +12,8 @@ from sage.all import (cached_function, QuadraticForm, ZZ, QQ,
 from degree2.utils import list_group_by
 import operator
 
-from siegel_series.rec_coeff import (cbb2_0, cbb2_1, _pol_ring, JordanBlock2,
-                                     cbb2_dict)
+from .rec_coeff import (cbb2_0, cbb2_1, _pol_ring, JordanBlock2,
+                        cbb2_dict)
 
 X = _pol_ring().gens()[0]
 

@@ -4,10 +4,10 @@ from sage.all import (matrix, QQ, ZZ, prime_factors, mul, QuadraticForm,
                       diagonal_matrix, block_diagonal_matrix,
                       least_quadratic_nonresidue)
 from degree2.all import eisenstein_series_degree2
-from siegel_series.impl import siegel_series_polynomial, X
-from siegel_series.local_invariants import zeta_p, e_p
-from siegel_series.tests.utils import random_even_symm_mat
-from siegel_series.pull_back_of_siegel_eisen import r_n_m_iter
+from ..impl import siegel_series_polynomial, X
+from ..local_invariants import zeta_p, e_p
+from ..tests.utils import random_even_symm_mat
+from ..pull_back_of_siegel_eisen import r_n_m_iter
 
 h_mat = matrix([[QQ(2), QQ(1) / QQ(2)],
                 [QQ(1) / QQ(2), QQ(1)]])

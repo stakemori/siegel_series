@@ -1,6 +1,6 @@
 import unittest
 from sage.all import eisenstein_series_qexp, matrix, ZZ
-from siegel_series.siegel_eisenstein import SiegelEisensteinSeries as sess
+from ..siegel_eisenstein import SiegelEisensteinSeries as sess
 from degree2.all import eisenstein_series_degree2
 
 

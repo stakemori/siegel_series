@@ -1,6 +1,6 @@
 # -*- coding: utf-8; mode: sage -*-
-from siegel_series.local_invariants import (xi_p, eta_p,
-                                            delta_p, small_d, xi_to_xi_dash)
+from .local_invariants import (xi_p, eta_p,
+                               delta_p, small_d, xi_to_xi_dash)
 from sage.all import (PolynomialRing, QQ, cached_function, ZZ, matrix,
                       QuadraticForm, hilbert_symbol)
 

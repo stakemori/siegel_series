@@ -1,6 +1,6 @@
 from sage.all import ZZ, floor, sqrt, matrix, block_matrix, QQ
-from siegel_series.siegel_eisenstein import SiegelEisensteinSeries as sess
-from siegel_series.utils import is_semi_positive_definite
+from .siegel_eisenstein import SiegelEisensteinSeries as sess
+from .utils import is_semi_positive_definite
 import itertools
 
 
