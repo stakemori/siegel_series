@@ -145,7 +145,7 @@ def _invariants_2_even(b1, q2):
     xi_hat_dash = xi_to_xi_dash(xi_hat)
     # Definition of eta_tilde
     if b1.type == 'u' and small_d(q2) % 2 == 0:
-        _q = JordanBlocks((m, b1._mat_prim[(1, 1)]), two)
+        _q = JordanBlocks([(m, b1._mat_prim[(1, 1)])], two)
         eta_tilde = eta_p(_q + q2)
     elif b1.type != 'u' and xi_hat != 0:
         eta_tilde = ((-1) ** (((n - 1) ** 2 - 1) // 8) * q2.hasse_invariant__OMeara()
