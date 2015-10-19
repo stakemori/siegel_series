@@ -128,6 +128,15 @@ class JordanBlocks(object):
         else:
             raise NotImplementedError
 
+    def __hash__(self):
+        return hash(('JordanBlocks', tuple(self.blocks), self.p))
+
+    def __eq__(self, other):
+        if isinstance(other, JordanBlocks):
+            return self.blocks == other.blocks and self.p == other.p
+        else:
+            return False
+
 
 def bracket_action(a, b):
     return b.transpose() * a * b
