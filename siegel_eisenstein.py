@@ -1,8 +1,8 @@
 # -*- coding: utf-8; mode: sage -*-
 from sage.all import ZZ, prime_factors, quadratic_L_function__exact, QQ
 from sage.all import zeta as _zeta
-from siegel_series.impl import siegel_series_polynomial, X
-from siegel_series.utils import non_deg_submatrix
+from .impl import siegel_series_polynomial, X
+from .utils import non_deg_submatrix
 import operator
 
 

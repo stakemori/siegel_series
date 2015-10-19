@@ -8,9 +8,9 @@ American jornal of Mathematics 121 (199),415 - 452.'
 from sage.all import (ZZ, fundamental_discriminant, valuation,
                       kronecker_symbol, cached_function)
 
-from siegel_series.rec_coeff import cbb2_0, cbb2_1, _pol_ring, cbb2_dict
-from siegel_series.jordan_block import (jordan_blocks_odd, jordan_blocks_2,
-                                        JordanBlock2, JordanBlocks)
+from .rec_coeff import cbb2_0, cbb2_1, _pol_ring, cbb2_dict
+from .jordan_block import (jordan_blocks_odd, jordan_blocks_2,
+                           JordanBlock2, JordanBlocks)
 
 X = _pol_ring().gens()[0]
 

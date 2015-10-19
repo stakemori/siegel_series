@@ -2,9 +2,9 @@
 
 import unittest
 from sage.all import ZZ, kronecker_symbol, valuation, gcd, mul, QuadraticForm, matrix, QQ
-from siegel_series.tests.utils import random_even_symm_mat
-from siegel_series.impl import jordan_blocks_odd, jordan_blocks_2
-from siegel_series.jordan_block import _jordan_decomposition_odd_p
+from ..tests.utils import random_even_symm_mat
+from ..impl import jordan_blocks_odd, jordan_blocks_2
+from ..jordan_block import _jordan_decomposition_odd_p
 import operator
 
 
