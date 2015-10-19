@@ -1,13 +1,14 @@
 # -*- coding: utf-8; mode: sage -*-
 import unittest
-from sage.all import (matrix, QQ, ZZ, prime_factors, mul, QuadraticForm,
+from sage.all import (matrix, QQ, ZZ, prime_factors, mul,
                       diagonal_matrix, block_diagonal_matrix,
                       least_quadratic_nonresidue)
 from degree2.all import eisenstein_series_degree2
 from siegel_series.impl import siegel_series_polynomial, X
 from siegel_series.local_invariants import zeta_p, e_p
 from siegel_series.tests.utils import random_even_symm_mat
-from siegel_series.pull_back_of_siegel_eisen import r_n_m_iter
+from siegel_series.pullback_of_siegel_eisen import r_n_m_iter
+from siegel_series.jordan_block import jordan_blocks_odd, jordan_blocks_2
 
 h_mat = matrix([[QQ(2), QQ(1) / QQ(2)],
                 [QQ(1) / QQ(2), QQ(1)]])
@@ -42,9 +43,12 @@ class SiegelSeriesTest(unittest.TestCase):
     def assert_func_eq(self, B, p):
         p = ZZ(p)
         n = B.ncols()
-        q = QuadraticForm(ZZ, ZZ(2) * B)
+        if p == 2:
+            q = jordan_blocks_2(B)
+        else:
+            q = jordan_blocks_odd(B, p)
         pl = siegel_series_polynomial(B, p)
-        eb = e_p(q, p)
+        eb = e_p(q)
         self.assertEqual(pl.subs({X: p ** (- n - 1) * X ** (-1)}) *
                          p ** (((n + 1) * eb) // 2) * X ** (eb),
                          zeta_p(q, p) * pl)
