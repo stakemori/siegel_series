@@ -112,12 +112,18 @@ class JordanBlocks(object):
     def __radd__(self, other):
         if isinstance(other, JordanBlock2):
             if other.type in ('h', 'y'):
-                blcs = [(other.m, other.typs)] + self.blocks
+                blcs = [(other.m, other.type)] + self.blocks
             else:
-                blcs = [(other.m, other._mat_prim[i])
+                blcs = [(other.m, other._mat_prim[i, i])
                         for i in range(2)] + self.blocks
             return JordanBlocks(blcs, two)
         elif isinstance(other, JordanBlocks):
+            return JordanBlocks(other.blocks + self.blocks, self.p)
+        else:
+            raise NotImplementedError
+
+    def __add__(self, other):
+        if isinstance(other, JordanBlocks):
             return JordanBlocks(other.blocks + self.blocks, self.p)
         else:
             raise NotImplementedError
