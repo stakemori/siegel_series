@@ -58,7 +58,12 @@ class JordanBlockTest(unittest.TestCase):
             blcs = jordan_blocks_odd(mat, p)
         q = QuadraticForm(ZZ, ZZ(2) * mat)
         q1 = _blocks_to_quad_form(blcs.blocks, p)
-        self.assertTrue(q.has_equivalent_Jordan_decomposition_at_prime(q1, p))
+        if p == 2:
+            self.assertTrue((q.det() / q1.det()) % 8 == 1)
+        else:
+            self.assertTrue(kronecker_symbol(q.det() / q1.det(), p) == 1)
+        self.assertEqual(
+            q.hasse_invariant__OMeara(p), q1.hasse_invariant__OMeara(p))
 
     def test_jordan_decomposition_odd_p(self):
         for _ in range(100):
@@ -94,7 +99,7 @@ class JordanBlockTest(unittest.TestCase):
                     self.assert_jordan_blocks_method(p, s)
 
     def test_jordan_blcs(self):
-        for _ in range(100):
+        for _ in range(1000):
             m = random_even_symm_mat(5)
             n = random_even_symm_mat(4)
             for p in [2, 3, 5, 7]:
