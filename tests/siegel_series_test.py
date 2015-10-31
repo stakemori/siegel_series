@@ -116,11 +116,24 @@ class SiegelSeriesTest(unittest.TestCase):
             diagonal_matrix([u, p * u, p ** 2, p ** 3]), p)
 
     def test_func_eq_general_degree_random(self):
-        for _ in range(30):
+        for _ in range(100):
             for n in [3, 4, 5, 6, 7]:
                 m = random_even_symm_mat(n)
+                m1 = random_even_symm_mat(n - 1)
+                m2 = random_even_symm_mat(n - 2)
                 for p in [ZZ(2), ZZ(3), ZZ(5), ZZ(7)]:
                     self.assert_func_eq(m, p)
+                    self.assert_func_eq(block_diagonal_matrix(m, p * m), p)
+                    self.assert_func_eq(
+                        block_diagonal_matrix(m, p ** 2 * m, p ** 3 * m), p)
+                    self.assert_func_eq(
+                        block_diagonal_matrix(m, p * m1), p)
+                    self.assert_func_eq(
+                        block_diagonal_matrix(m, p ** 2 * m1), p)
+                    self.assert_func_eq(
+                        block_diagonal_matrix(m, p ** 2 * m2), p)
+                    self.assert_func_eq(
+                        block_diagonal_matrix(m, p * m2), p)
 
 
 suite = unittest.TestLoader().loadTestsFromTestCase(SiegelSeriesTest)
